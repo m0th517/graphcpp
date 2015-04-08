@@ -2,8 +2,8 @@
 #include <iostream>
 #include "unionf.hpp"
 #include "graph.hpp"
-#include "kruskal.hpp"
 #include "prim_mst.hpp"
+#include "kruskal_mst.hpp"
 
 using std::cout;
 
