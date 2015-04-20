@@ -5,6 +5,7 @@
 #ifndef PRIM_HPP
 #define PRIM_HPP
 
+// reverse comparision. so smaller elements are first in queue
 class redge_comparator {
   unsigned weight_idx;
 
