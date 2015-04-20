@@ -38,11 +38,17 @@ struct vertex {
   attr_c attributes;
 };
 
-void graph_init_from_edges(graph_t &graph, idx_t num_elements, redge_c &edges);
+void graph_init_from_edges(graph_t &graph, idx_t num_elements, redge_c &edges, graph_direction dir = DIRECTED);
 
 idx_t graph_init(graph_t &graph, std::string filename, int num_weights, graph_direction dir = DIRECTED);
 
 idx_t edge_init(redge_c &edges, std::string filename, int num_weights, graph_direction dir = DIRECTED);
+
+// does not check for existance of edge
+// is dir = UNDIRECTED, function looks switches source und target additionally
+double graph_get_edge_weight(const graph_t &graph, idx_t source,
+                             idx_t destination, unsigned weight_idx = 0,
+                             graph_direction dir = DIRECTED);
 
 unsigned graph_traverse_depth_first(const graph_t &graph, idx_t start_vertex,
                                 std::vector<idx_t> &path);

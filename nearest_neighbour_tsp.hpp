@@ -14,10 +14,9 @@ public:
   }
 };
 
-// TODO iterative solution
-
 void nearest_neighbour_tsp_r(const graph_t &graph, vector<idx_t> &tour,
-                             vector<bool> &visited, idx_t current_vertex = 0,
+                             vector<bool> &visited, double &cost,
+                             idx_t current_vertex = 0,
                              unsigned weight_idx = 0) {
   edge e;
   edge_c neighbours = graph[current_vertex].edges;
@@ -31,26 +30,34 @@ void nearest_neighbour_tsp_r(const graph_t &graph, vector<idx_t> &tour,
       continue;
 
     choice = i;
+    cost += e.weights[weight_idx];
     visited[e.destination] = true;
     tour.push_back(e.destination);
     break;
   }
 
-  if(choice > num_neighbours)
-      return;
+  if (choice > num_neighbours)
+    return;
 
-  nearest_neighbour_tsp_r(graph, tour, visited, neighbours[choice].destination,
-                          weight_idx);
+  nearest_neighbour_tsp_r(graph, tour, visited, cost,
+                          neighbours[choice].destination, weight_idx);
 }
 
-bool nearest_neighbour_tsp(const graph_t &graph, vector<idx_t> &tour,
-                           idx_t initial_vertex = 0, unsigned weight_idx = 0) {
+double nearest_neighbour_tsp(const graph_t &graph, vector<idx_t> &tour,
+                             idx_t initial_vertex = 0,
+                             unsigned weight_idx = 0) {
+  double cost = 0;
   vector<bool> visited(graph.size(), false);
   visited[initial_vertex] = true;
   tour.push_back(initial_vertex);
 
-  nearest_neighbour_tsp_r(graph, tour, visited, initial_vertex, weight_idx);
-  return true;
+  nearest_neighbour_tsp_r(graph, tour, visited, cost, initial_vertex,
+                          weight_idx);
+
+  // the way back
+  cost += graph_get_edge_weight(graph, tour.back(), initial_vertex, weight_idx);
+  tour.push_back(initial_vertex);
+  return cost;
 }
 
 #endif

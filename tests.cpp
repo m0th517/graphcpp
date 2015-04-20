@@ -23,56 +23,61 @@ int main(int argc, char **argv) {
   //test_prim_mst();
   test_nearest_neighbour();
   test_nearest_double_tree_tsp();
+
   cout << "ALL DONE.\n";
   return 0;
 }
 
 void test_nearest_double_tree_tsp(){
   cout << "=== DOUBLE TREE TEST ===\n";
+
   redge_c edges;
   idx_t num_elements =
-      edge_init(edges, "graphs/Wege1.txt", 1, UNDIRECTED);
+      edge_init(edges, "graphs/K_10.txt", 1, UNDIRECTED);
 
 
   vector<idx_t> tsp_path;
-  double_tree_tsp(num_elements,edges,tsp_path);
-  cout << "Wege1.txt:\n";
+  double tsp_cost = double_tree_tsp(num_elements,edges,tsp_path);
+  cout << "K_10.txt:\n";
   cout << "tour size: " << tsp_path.size() << "\n";
+  cout << "tour cost: " << tsp_cost << "\n";
   cout << "tour: ";
   for(unsigned i = 0; i < tsp_path.size(); ++i)
       cout << tsp_path[i] << ", ";
   cout << "\n";
-  assert(tsp_path.size() == num_elements);
+  assert(tsp_path.size() == num_elements+1);
 }
 
 void test_nearest_neighbour(){
   cout << "=== NEAREST NEIGHBOUR TEST ===\n";
   graph_t graph;
   idx_t num_elements =
-      graph_init(graph, "graphs/Wege1.txt", 1, UNDIRECTED);
+      graph_init(graph, "graphs/K_10.txt", 1, UNDIRECTED);
 
   vector<idx_t> tsp_path;
-  nearest_neighbour_tsp(graph,tsp_path);
-  cout << "Wege1.txt:\n";
+  double tsp_cost = nearest_neighbour_tsp(graph, tsp_path);
+  cout << "K_10.txt:\n";
   cout << "tour size: " << tsp_path.size() << "\n";
+  cout << "tour cost: " << tsp_cost << "\n";
   cout << "tour: ";
   for(unsigned i = 0; i < tsp_path.size(); ++i)
       cout << tsp_path[i] << ", ";
   cout << "\n";
-  assert(tsp_path.size() == num_elements);
+  assert(tsp_path.size() == num_elements+1);
 
   num_elements =
       graph_init(graph, "graphs/Wege2.txt", 1, UNDIRECTED);
 
   tsp_path.clear();
-  nearest_neighbour_tsp(graph,tsp_path);
+  tsp_cost = nearest_neighbour_tsp(graph,tsp_path);
   cout << "Wege2.txt:\n";
   cout << "tour size: " << tsp_path.size() << "\n";
+  cout << "tour cost: " << tsp_cost << "\n";
   cout << "tour: ";
   for(unsigned i = 0; i < tsp_path.size(); ++i)
       cout << tsp_path[i] << ", ";
   cout << "\n";
-  assert(tsp_path.size() == num_elements);
+  assert(tsp_path.size() == num_elements+1);
 }
 
 void test_union_struct() {

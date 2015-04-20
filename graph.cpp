@@ -3,21 +3,26 @@
 #include <deque>
 #include <algorithm>
 #include <sstream>
+#include <iostream>
 #include "graph.hpp"
 
-void graph_init_from_edges(graph_t &graph, idx_t num_elements, redge_c &edges){
+void graph_init_from_edges(graph_t &graph, idx_t num_elements, redge_c &edges,
+                           graph_direction dir) {
   raw_edge edge;
-   graph = graph_t(num_elements); 
-   for(idx_t i = 0; i < edges.size(); ++i){
-     edge = edges[i];
-     graph[edges[i].source].edges.push_back(
-         { edge.destination, edge.weights });
-   }
+  graph = graph_t(num_elements);
+  for (idx_t i = 0; i < edges.size(); ++i) {
+    edge = edges[i];
+    graph[edges[i].source].edges.push_back({edge.destination, edge.weights});
+
+    if (dir == UNDIRECTED)
+      graph[edges[i].destination].edges.push_back({edge.source, edge.weights});
+  }
 }
 
-idx_t graph_init(graph_t &graph, std::string filename, int num_weights, graph_direction dir) {
+idx_t graph_init(graph_t &graph, std::string filename, int num_weights,
+                 graph_direction dir) {
   edge e;
-  idx_t source, undir_source,num_vertices;
+  idx_t source, undir_source, num_vertices;
   std::string line;
   std::vector<std::string> parts;
 
@@ -56,7 +61,8 @@ idx_t graph_init(graph_t &graph, std::string filename, int num_weights, graph_di
   return num_vertices;
 }
 
-idx_t edge_init(redge_c &edges, std::string filename, int num_weights, graph_direction dir){
+idx_t edge_init(redge_c &edges, std::string filename, int num_weights,
+                graph_direction dir) {
   raw_edge e;
   idx_t undir_source;
   size_t num_vertices;
@@ -99,7 +105,7 @@ idx_t edge_init(redge_c &edges, std::string filename, int num_weights, graph_dir
 }
 
 unsigned graph_traverse_depth_first(const graph_t &graph, idx_t start_vertex,
-                                std::vector<idx_t> &path) {
+                                    std::vector<idx_t> &path) {
   unsigned num_components = 1;
   std::vector<bool> visited(graph.size(), false);
   path.push_back(start_vertex);
@@ -109,7 +115,7 @@ unsigned graph_traverse_depth_first(const graph_t &graph, idx_t start_vertex,
     if (visited[i])
       continue;
     ++num_components;
-   path.push_back(i);
+    path.push_back(i);
     graph_traverse_depth_first_r(graph, i, visited, path);
   }
 
@@ -154,7 +160,7 @@ void graph_traverse_breadth_first(const graph_t &graph, idx_t start_vertex,
 }
 
 bool comp_weight_1(const raw_edge &x, const raw_edge &y) {
-    return x.weights[0] < y.weights[0];
+  return x.weights[0] < y.weights[0];
 }
 
 std::vector<std::string> &str_split(const std::string &s, char delim,
@@ -171,4 +177,23 @@ std::vector<std::string> str_split(const std::string &s, char delim) {
   std::vector<std::string> elems;
   str_split(s, delim, elems);
   return elems;
+}
+
+double graph_get_edge_weight(const graph_t &graph, idx_t source,
+                             idx_t destination, unsigned weight_idx,
+                             graph_direction dir) {
+  edge_c neighbours = graph[source].edges;
+  for (idx_t i = 0; i < neighbours.size(); ++i)
+    if (neighbours[i].destination == destination)
+      return neighbours[i].weights[weight_idx];
+
+  if (dir == UNDIRECTED) {
+    neighbours = graph[destination].edges;
+    for (idx_t i = 0; i < neighbours.size(); ++i) {
+      if (neighbours[i].destination == source)
+        return neighbours[i].weights[weight_idx];
+    }
+  }
+
+  std::cout << source <<"," << destination << "\n";
 }
