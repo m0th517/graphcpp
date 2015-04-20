@@ -37,9 +37,9 @@ double double_tree_tsp(idx_t num_elements, redge_c &edges,
   std::vector<bool> visited(tour.size(), false);
   for (idx_t i = 1; i < tour.size(); ++i) {
     if (!visited[tour[i]]) {
-      tsp_path.push_back(tour[i]);
       total_cost +=
-          graph_get_edge_weight(full_graph, tour[i - 1], tour[i], weight_idx);
+          graph_get_edge_weight(full_graph, tsp_path.back(), tour[i], weight_idx);
+      tsp_path.push_back(tour[i]);
       visited[tour[i]] = true;
     }
   }
