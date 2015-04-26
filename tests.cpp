@@ -5,6 +5,7 @@
 #include "prim_mst.hpp"
 #include "kruskal_mst.hpp"
 #include "nearest_neighbour_tsp.hpp"
+#include "double_tree_tsp.hpp"
 
 using std::cout;
 
@@ -13,6 +14,7 @@ void test_union_struct();
 void test_kruskal_mst();
 void test_prim_mst();
 void test_nearest_neighbour();
+void test_nearest_double_tree_tsp();
 
 int main(int argc, char **argv) {
   //test_graph_and_components();
@@ -20,8 +22,27 @@ int main(int argc, char **argv) {
   //test_kruskal_mst();
   //test_prim_mst();
   test_nearest_neighbour();
+  test_nearest_double_tree_tsp();
   cout << "ALL DONE.\n";
   return 0;
+}
+
+void test_nearest_double_tree_tsp(){
+  cout << "=== DOUBLE TREE TEST ===\n";
+  redge_c edges;
+  idx_t num_elements =
+      edge_init(edges, "graphs/Wege1.txt", 1, UNDIRECTED);
+
+
+  vector<idx_t> tsp_path;
+  double_tree_tsp(num_elements,edges,tsp_path);
+  cout << "Wege1.txt:\n";
+  cout << "tour size: " << tsp_path.size() << "\n";
+  cout << "tour: ";
+  for(unsigned i = 0; i < tsp_path.size(); ++i)
+      cout << tsp_path[i] << ", ";
+  cout << "\n";
+  assert(tsp_path.size() == num_elements);
 }
 
 void test_nearest_neighbour(){
