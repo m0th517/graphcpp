@@ -6,6 +6,7 @@
 #include "kruskal_mst.hpp"
 #include "nearest_neighbour_tsp.hpp"
 #include "double_tree_tsp.hpp"
+#include "all_paths_tsp.hpp"
 
 using std::cout;
 
@@ -15,17 +16,29 @@ void test_kruskal_mst();
 void test_prim_mst();
 void test_nearest_neighbour();
 void test_nearest_double_tree_tsp();
+void test_all_paths_tsp();
 
 int main(int argc, char **argv) {
   //test_graph_and_components();
   //test_union_struct();
   //test_kruskal_mst();
   //test_prim_mst();
-  test_nearest_neighbour();
-  test_nearest_double_tree_tsp();
+  //test_nearest_neighbour();
+  //test_nearest_double_tree_tsp();
+  test_all_paths_tsp();
 
   cout << "ALL DONE.\n";
   return 0;
+}
+
+void test_all_paths_tsp(){
+  cout << "=== ALL PATHS ===\n";
+  graph_t graph;
+  idx_t num_elements =
+      graph_init(graph, "graphs/small_paths.txt", 1, UNDIRECTED);
+
+  vector<idx_t> tour;
+  all_paths_tsp(graph,tour,0);
 }
 
 void test_nearest_double_tree_tsp(){
@@ -65,19 +78,19 @@ void test_nearest_neighbour(){
   cout << "\n";
   assert(tsp_path.size() == num_elements+1);
 
-  num_elements =
-      graph_init(graph, "graphs/Wege2.txt", 1, UNDIRECTED);
+  //num_elements =
+      //graph_init(graph, "graphs/Wege2.txt", 1, UNDIRECTED);
 
-  tsp_path.clear();
-  tsp_cost = nearest_neighbour_tsp(graph,tsp_path);
-  cout << "Wege2.txt:\n";
-  cout << "tour size: " << tsp_path.size() << "\n";
-  cout << "tour cost: " << tsp_cost << "\n";
-  cout << "tour: ";
-  for(unsigned i = 0; i < tsp_path.size(); ++i)
-      cout << tsp_path[i] << ", ";
-  cout << "\n";
-  assert(tsp_path.size() == num_elements+1);
+  //tsp_path.clear();
+  //tsp_cost = nearest_neighbour_tsp(graph,tsp_path);
+  //cout << "Wege2.txt:\n";
+  //cout << "tour size: " << tsp_path.size() << "\n";
+  //cout << "tour cost: " << tsp_cost << "\n";
+  //cout << "tour: ";
+  //for(unsigned i = 0; i < tsp_path.size(); ++i)
+      //cout << tsp_path[i] << ", ";
+  //cout << "\n";
+  //assert(tsp_path.size() == num_elements+1);
 }
 
 void test_union_struct() {
