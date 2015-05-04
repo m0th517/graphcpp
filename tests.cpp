@@ -6,7 +6,8 @@
 #include "kruskal_mst.hpp"
 #include "nearest_neighbour_tsp.hpp"
 #include "double_tree_tsp.hpp"
-#include "all_paths_tsp.hpp"
+#include "all_paths.hpp"
+#include "branch_and_bound_tsp.hpp"
 
 using std::cout;
 
@@ -16,7 +17,8 @@ void test_kruskal_mst();
 void test_prim_mst();
 void test_nearest_neighbour();
 void test_nearest_double_tree_tsp();
-void test_all_paths_tsp();
+void test_all_paths();
+void test_branch_and_bound();
 
 int main(int argc, char **argv) {
   //test_graph_and_components();
@@ -25,20 +27,41 @@ int main(int argc, char **argv) {
   //test_prim_mst();
   //test_nearest_neighbour();
   //test_nearest_double_tree_tsp();
-  test_all_paths_tsp();
+  //test_all_paths();
+  test_branch_and_bound();
 
   cout << "ALL DONE.\n";
   return 0;
 }
 
-void test_all_paths_tsp(){
+void test_branch_and_bound(){
+  cout << "=== BRANCH AND BOUND ===\n";
+  graph_t graph;
+  idx_t num_elements =
+      graph_init(graph, "graphs/small_paths.txt", 1, UNDIRECTED);
+
+  vector<idx_t> tour{0,1,2,3};
+  double cost;
+  bool d = walk_path(graph,tour, 6, cost);
+  cout << d << "\n" << cost << "\n";
+  //branch_and_bound_tsp(graph,tour);
+
+}
+
+void print_path(vector<idx_t> &tour,void*){
+    for (unsigned j = 0; j < tour.size(); ++j)
+      cout << tour[j] << ",";
+    cout << "\n";
+}
+
+void test_all_paths(){
   cout << "=== ALL PATHS ===\n";
   graph_t graph;
   idx_t num_elements =
       graph_init(graph, "graphs/small_paths.txt", 1, UNDIRECTED);
 
   vector<idx_t> tour;
-  all_paths_tsp(graph,tour,0);
+  all_paths(graph,print_path);
 }
 
 void test_nearest_double_tree_tsp(){
