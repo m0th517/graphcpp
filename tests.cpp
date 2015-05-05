@@ -37,15 +37,15 @@ int main(int argc, char **argv) {
 void test_branch_and_bound(){
   cout << "=== BRANCH AND BOUND ===\n";
   graph_t graph;
+  vector<idx_t> tour;
   idx_t num_elements =
-      graph_init(graph, "graphs/small_paths.txt", 1, UNDIRECTED);
-
-  vector<idx_t> tour{0,1,2,3};
-  double cost;
-  bool d = walk_path(graph,tour, 6, cost);
-  cout << d << "\n" << cost << "\n";
-  //branch_and_bound_tsp(graph,tour);
-
+      graph_init(graph, "graphs/K_10.txt", 1, UNDIRECTED);
+  double cost = branch_and_bound_tsp(graph,tour);
+  cout << "cost: " << cost << "\n";
+  cout << "tour: ";
+  for(unsigned i = 0; i < tour.size(); ++i)
+      cout << tour[i] << ",";
+  cout << "\n";
 }
 
 void print_path(vector<idx_t> &tour,void*){
@@ -64,7 +64,7 @@ void test_all_paths(){
   all_paths(graph,print_path);
 }
 
-void test_nearest_double_tree_tsp(){
+void test_double_tree_tsp(){
   cout << "=== DOUBLE TREE TEST ===\n";
 
   redge_c edges;
