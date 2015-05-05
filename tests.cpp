@@ -8,6 +8,7 @@
 #include "double_tree_tsp.hpp"
 #include "all_paths.hpp"
 #include "branch_and_bound_tsp.hpp"
+#include "dijkstra_sp.hpp"
 
 using std::cout;
 
@@ -19,6 +20,7 @@ void test_nearest_neighbour();
 void test_nearest_double_tree_tsp();
 void test_all_paths();
 void test_branch_and_bound();
+void test_dijkstra();
 
 int main(int argc, char **argv) {
   //test_graph_and_components();
@@ -28,10 +30,28 @@ int main(int argc, char **argv) {
   //test_nearest_neighbour();
   //test_nearest_double_tree_tsp();
   //test_all_paths();
-  test_branch_and_bound();
+  //test_branch_and_bound();
+  test_dijkstra();
 
   cout << "ALL DONE.\n";
   return 0;
+}
+
+void test_dijkstra(){
+  cout << "=== DIJKSTRA ===\n";
+
+  graph_t graph;
+  vector<idx_t> tour;
+  idx_t num_elements =
+      graph_init(graph, "graphs/G_100_200.txt", 1, UNDIRECTED);
+
+  double cost = dijkstra_sp(graph, tour, 0, 1);
+
+  cout << "cost: " << cost << "\n";
+  cout << "tour: ";
+  for(unsigned i = 0; i < tour.size(); ++i)
+      cout << tour[i] << ",";
+  cout << "\n";
 }
 
 void test_branch_and_bound(){
