@@ -4,7 +4,7 @@
 #include <iostream>
 
 void branch_and_bound_tsp_r(const graph_t &graph, vector<idx_t> &current_tour,
-                            double &current_cost, idx_t current_vertex,
+                            double current_cost, idx_t current_vertex,
                             idx_t initial_vertex, vector<bool> &visited,
                             vector<idx_t> &best_tour, double &best_cost,
                             unsigned weight_idx = 0) {
@@ -39,15 +39,14 @@ void branch_and_bound_tsp_r(const graph_t &graph, vector<idx_t> &current_tour,
       continue;
 
     visited[e.destination] = true;
-    current_cost += cost;
+    //current_cost += cost;
     current_tour.push_back(e.destination);
 
-    branch_and_bound_tsp_r(graph, current_tour, current_cost, e.destination, initial_vertex,
+    branch_and_bound_tsp_r(graph, current_tour, current_cost+cost, e.destination, initial_vertex,
                            visited, best_tour, best_cost, weight_idx);
     // unvisit on the way back up
     visited[e.destination] = false;
     current_tour.pop_back();
-    current_cost -= cost;
   }
 }
 

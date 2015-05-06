@@ -61,6 +61,7 @@ void test_branch_and_bound(){
   idx_t num_elements =
       graph_init(graph, "graphs/K_10.txt", 1, UNDIRECTED);
   double cost = branch_and_bound_tsp(graph,tour);
+  assert(cost- 38.41 <= 0.0001);
   cout << "cost: " << cost << "\n";
   cout << "tour: ";
   for(unsigned i = 0; i < tour.size(); ++i)

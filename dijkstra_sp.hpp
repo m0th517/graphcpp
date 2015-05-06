@@ -52,12 +52,10 @@ double dijkstra_sp(graph_t &graph, vector<idx_t> &tour, idx_t source,
   }
 
   idx_t n = destination;
-  vector<double> costs;
-  double cost = 0;
+  double cost = dist[n];
 
   while (n != ((idx_t) - 1)) {
     tour.push_back(n);
-    cost += dist[n];
     n = prev[n];
   }
 

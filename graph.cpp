@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <sstream>
 #include <iostream>
+#include <stdexcept>
 #include "graph.hpp"
 
 void graph_init_from_edges(graph_t &graph, idx_t num_elements, redge_c &edges,
@@ -187,4 +188,5 @@ double graph_get_edge_weight(const graph_t &graph, idx_t source,
   for (idx_t i = 0; i < neighbours.size(); ++i)
     if (neighbours[i].destination == destination)
       return neighbours[i].weights[weight_idx];
+  throw std::runtime_error("Edge weight not found.");
 }
