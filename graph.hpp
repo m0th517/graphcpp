@@ -45,10 +45,8 @@ idx_t graph_init(graph_t &graph, std::string filename, int num_weights, graph_di
 idx_t edge_init(redge_c &edges, std::string filename, int num_weights, graph_direction dir = DIRECTED);
 
 // does not check for existance of edge
-// is dir = UNDIRECTED, function looks switches source und target additionally
 double graph_get_edge_weight(const graph_t &graph, idx_t source,
-                             idx_t destination, unsigned weight_idx = 0,
-                             graph_direction dir = DIRECTED);
+                             idx_t destination, unsigned weight_idx = 0);
 
 unsigned graph_traverse_depth_first(const graph_t &graph, idx_t start_vertex,
                                 std::vector<idx_t> &path);

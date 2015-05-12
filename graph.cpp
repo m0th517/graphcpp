@@ -182,8 +182,7 @@ std::vector<std::string> str_split(const std::string &s, char delim) {
 }
 
 double graph_get_edge_weight(const graph_t &graph, idx_t source,
-                             idx_t destination, unsigned weight_idx,
-                             graph_direction dir) {
+                             idx_t destination, unsigned weight_idx) {
   edge_c neighbours = graph[source].edges;
   for (idx_t i = 0; i < neighbours.size(); ++i)
     if (neighbours[i].destination == destination)

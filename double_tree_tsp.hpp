@@ -31,7 +31,7 @@ double double_tree_tsp(idx_t num_elements, redge_c &edges,
   }
 
   total_cost += graph_get_edge_weight(full_graph, tsp_path.back(), start_vertex,
-                                      weight_idx, UNDIRECTED);
+                                      weight_idx);
   tsp_path.push_back(start_vertex);
 
   return total_cost;
