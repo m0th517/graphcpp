@@ -29,8 +29,8 @@ int main(int argc, char **argv) {
   //test_prim_mst();
   //test_nearest_neighbour();
   //test_nearest_double_tree_tsp();
-  //test_all_paths();
-  //test_branch_and_bound();
+  test_all_paths();
+  test_branch_and_bound();
   test_dijkstra();
 
   cout << "ALL DONE.\n";

@@ -16,7 +16,7 @@ void branch_and_bound_tsp_r(const graph_t &graph, vector<idx_t> &current_tour,
   if (current_tour.size() == graph.size()) {
     // the way back
     back_cost = graph_get_edge_weight(graph, current_tour.back(), initial_vertex,
-                                      weight_idx,UNDIRECTED);
+                                      weight_idx);
 
     if ((current_cost + back_cost) > best_cost)
       return;
