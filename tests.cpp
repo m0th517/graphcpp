@@ -33,8 +33,8 @@ int main(int argc, char **argv) {
   // test_double_tree_tsp();
   // test_all_paths();
   // test_branch_and_bound();
-  test_dijkstra();
   test_mbf();
+  test_dijkstra();
 
   cout << "ALL DONE.\n";
   return 0;
@@ -62,6 +62,11 @@ void test_mbf() {
   edges.clear();
   num_elements = edge_init(edges, "graphs/Wege2.txt", 1, DIRECTED);
   cost = mbf_sp(num_elements, edges, tour, 2, 0, cycle);
+  cout << "cost: " << cost << "\n";
+  cout << "tour: ";
+  for (unsigned i = 0; i < tour.size(); ++i)
+    cout << tour[i] << ",";
+  cout << "\n";
   assert(cycle == false);
   assert(cost == 2);
 
@@ -99,7 +104,12 @@ void test_dijkstra() {
   graph.clear();
   num_elements = graph_init(graph, "graphs/Wege2.txt", 1, DIRECTED);
   cost = dijkstra_sp(graph, tour, 2, 0);
-  assert(cost == 6);
+  cout << "cost: " << cost << "\n";
+  cout << "tour: ";
+  for (unsigned i = 0; i < tour.size(); ++i)
+    cout << tour[i] << ",";
+  cout << "\n";
+  assert(cost == 2);
 }
 
 void test_branch_and_bound() {
