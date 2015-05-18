@@ -27,16 +27,36 @@ double dijkstra_sp(graph_t &graph, vector<idx_t> &tour, idx_t source,
   prev[source] = -1;
 
   while (!unvisited.empty()) {
-    unv_dist.clear();
-    unv_dist.resize(unvisited.size());
-    for (idx_t i = 0; i < unvisited.size(); ++i)
-      unv_dist[i] = dist[unvisited[i]];
+    //unv_dist.clear();
+    //unv_dist.resize(unvisited.size());
+    //for (idx_t i = 0; i < unvisited.size(); ++i)
+      //unv_dist[i] = dist[unvisited[i]];
 
-    min_it = std::min_element(unv_dist.begin(), unv_dist.end());
-    min_dist = *min_it;
-    min_idx = min_it - unv_dist.begin();
+    //min_it = std::min_element(unv_dist.begin(), unv_dist.end());
+    //min_dist = *min_it;
+    //min_idx = min_it - unv_dist.begin();
 
-    current_vertex = unvisited[min_idx];
+    //std::cout << "uv:\t";
+    //for(unsigned i = 0; i < unvisited.size(); ++i)
+        //std::cout << unvisited[i] <<","; 
+    //std::cout << "\n";
+    //std::cout << "di:\t";
+    //for(unsigned i = 0; i < unvisited.size(); ++i)
+        //std::cout << dist[unvisited[i]] <<","; 
+    //std::cout << "\n";
+
+    sort(unvisited.begin(), unvisited.end(),
+         [&dist](const idx_t &a, const idx_t &b)
+             ->bool { return dist[a] > dist[b]; });
+
+    //std::cout << min_idx << "\n";
+    //std::cout << "nuv:\t";
+    //for(unsigned i = 0; i < unvisited.size(); ++i)
+        //std::cout << unvisited[i] <<","; 
+    //std::cout << "\n";
+
+    current_vertex = unvisited.back();
+    unvisited.pop_back();
     remove_element(unvisited, min_idx);
 
     edges = graph[current_vertex].edges;
