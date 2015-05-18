@@ -70,6 +70,13 @@ void test_mbf() {
   num_elements = edge_init(edges, "graphs/Wege3.txt", 1, DIRECTED);
   cost = mbf_sp(num_elements, edges, tour, 2, 0, cycle);
   assert(cycle == true);
+
+  tour.clear();
+  edges.clear();
+  num_elements = edge_init(edges, "graphs/G_1_2.txt", 1, DIRECTED);
+  cost = mbf_sp(num_elements, edges, tour, 0, 1, cycle);
+  assert(cycle == false);
+  assert(std::fabs(cost - 5.54417) < 10e-5);
 }
 
 void test_dijkstra() {
