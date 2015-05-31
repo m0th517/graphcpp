@@ -10,6 +10,7 @@
 #include "branch_and_bound_tsp.hpp"
 #include "dijkstra_sp.hpp"
 #include "moore_bellman_ford_sp.hpp"
+#include "ford_fulkerson.hpp"
 
 using std::cout;
 
@@ -23,6 +24,7 @@ void test_all_paths();
 void test_branch_and_bound();
 void test_dijkstra();
 void test_mbf();
+void test_ford_fulkerson();
 
 int main(int argc, char **argv) {
   // test_graph_and_components();
@@ -33,18 +35,37 @@ int main(int argc, char **argv) {
   // test_double_tree_tsp();
   // test_all_paths();
   // test_branch_and_bound();
-  test_mbf();
-  test_dijkstra();
+  // test_mbf();
+  // test_dijkstra();
+  test_ford_fulkerson();
 
   cout << "ALL DONE.\n";
   return 0;
+}
+void test_ford_fulkerson() {
+  cout << "=== FORD FULKERSON ===\n";
+
+  graph_t graph;
+  idx_t num_elements;
+  double max_flow;
+
+  num_elements = graph_init(graph, "graphs/Fluss.txt", 1);
+
+  max_flow = ford_fulkerson_max_flow(graph, 0, 7);
+  std::cout << "flow: " << max_flow << "\n";
+  //assert(max_flow == 4);
+
+  num_elements = graph_init(graph, "graphs/G_1_2.txt", 1);
+
+  max_flow = ford_fulkerson_max_flow(graph, 0, 7);
+  //assert(fabs(max_flow - 0.735802) < 1e-10);
 }
 
 void test_mbf() {
   cout << "=== MOORE BELLMAN FORD ===\n";
 
   redge_c edges;
-  idx_t num_elements = edge_init(edges, "graphs/Wege1.txt", 1, DIRECTED);
+  idx_t num_elements = edge_init(edges, "graphs/Wege1.txt", 1);
 
   bool cycle;
   vector<idx_t> tour;
@@ -60,7 +81,7 @@ void test_mbf() {
 
   tour.clear();
   edges.clear();
-  num_elements = edge_init(edges, "graphs/Wege2.txt", 1, DIRECTED);
+  num_elements = edge_init(edges, "graphs/Wege2.txt", 1);
   cost = mbf_sp(num_elements, edges, tour, 2, 0, cycle);
   cout << "cost: " << cost << "\n";
   cout << "tour: ";
@@ -72,16 +93,24 @@ void test_mbf() {
 
   tour.clear();
   edges.clear();
-  num_elements = edge_init(edges, "graphs/Wege3.txt", 1, DIRECTED);
+  num_elements = edge_init(edges, "graphs/Wege3.txt", 1);
   cost = mbf_sp(num_elements, edges, tour, 2, 0, cycle);
   assert(cycle == true);
 
   tour.clear();
   edges.clear();
-  num_elements = edge_init(edges, "graphs/G_1_2.txt", 1, DIRECTED);
+  num_elements = edge_init(edges, "graphs/G_1_2.txt", 1);
   cost = mbf_sp(num_elements, edges, tour, 0, 1, cycle);
   assert(cycle == false);
   assert(std::fabs(cost - 5.54417) < 10e-5);
+
+  // tour.clear();
+  // edges.clear();
+  // num_elements = edge_init(edges, "graphs/G_1_2.txt", 1,UNDIRECTED);
+  // cost = mbf_sp(num_elements, edges, tour, 0, 1, cycle);
+
+  // assert(cycle == false);
+  // assert(std::fabs(cost - 5.54417) < 10e-5);
 }
 
 void test_dijkstra() {
@@ -89,7 +118,7 @@ void test_dijkstra() {
 
   graph_t graph;
   vector<idx_t> tour;
-  idx_t num_elements = graph_init(graph, "graphs/Wege1.txt", 1, DIRECTED);
+  idx_t num_elements = graph_init(graph, "graphs/Wege1.txt", 1);
 
   double cost = dijkstra_sp(graph, tour, 2, 0);
   assert(cost == 6);
@@ -102,7 +131,7 @@ void test_dijkstra() {
 
   tour.clear();
   graph.clear();
-  num_elements = graph_init(graph, "graphs/Wege2.txt", 1, DIRECTED);
+  num_elements = graph_init(graph, "graphs/Wege2.txt", 1);
   cost = dijkstra_sp(graph, tour, 2, 0);
   cout << "cost: " << cost << "\n";
   cout << "tour: ";
@@ -110,6 +139,15 @@ void test_dijkstra() {
     cout << tour[i] << ",";
   cout << "\n";
   assert(cost == 2);
+
+  tour.clear();
+  graph.clear();
+  graph_init(graph, "graphs/G_1_2.txt", 1, UNDIRECTED);
+  cost = dijkstra_sp(graph, tour, 0, 1);
+
+  cout << "cost: " << cost << "\n";
+  // assert(cycle == false);
+  // assert(std::fabs(cost - 5.54417) < 10e-5);
 }
 
 void test_branch_and_bound() {
@@ -293,7 +331,7 @@ void test_graph_and_components() {
   graph_traverse_depth_first(graph, 0, path);
   assert(path.size() == 15);
 
-  std::vector<idx_t> expected{0, 6, 9, 13};
+  std::vector<idx_t> expected{ 0, 6, 9, 13 };
   for (unsigned i = 0; i < expected.size(); ++i)
     assert(path[i] == expected[i]);
 
@@ -301,14 +339,14 @@ void test_graph_and_components() {
   graph_traverse_depth_first(graph, 4, path);
   assert(path.size() == 15);
 
-  std::vector<idx_t> expected2{4, 7, 12};
+  std::vector<idx_t> expected2{ 4, 7, 12 };
   for (unsigned i = 0; i < expected2.size(); ++i)
     assert(path[i] == expected2[i]);
 
   path.clear();
   graph_traverse_breadth_first(graph, 0, path);
 
-  std::vector<idx_t> expected3{0, 6, 9, 13};
+  std::vector<idx_t> expected3{ 0, 6, 9, 13 };
   for (unsigned i = 0; i < expected3.size(); ++i)
     assert(path[i] == expected3[i]);
 
