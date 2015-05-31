@@ -45,20 +45,21 @@ int main(int argc, char **argv) {
 void test_ford_fulkerson() {
   cout << "=== FORD FULKERSON ===\n";
 
-  graph_t graph;
+  redge_c edges;
   idx_t num_elements;
   double max_flow;
 
-  num_elements = graph_init(graph, "graphs/Fluss.txt", 1);
+  num_elements = edge_init(edges, "graphs/Fluss.txt", 1);
 
-  max_flow = ford_fulkerson_max_flow(graph, 0, 7);
+  max_flow = ford_fulkerson_max_flow(num_elements, edges, 0, 7);
   std::cout << "flow: " << max_flow << "\n";
-  //assert(max_flow == 4);
+  assert(max_flow == 4);
 
-  num_elements = graph_init(graph, "graphs/G_1_2.txt", 1);
-
-  max_flow = ford_fulkerson_max_flow(graph, 0, 7);
-  //assert(fabs(max_flow - 0.735802) < 1e-10);
+  edges.clear();
+  num_elements = edge_init(edges, "graphs/G_1_2.txt", 1);
+  max_flow = ford_fulkerson_max_flow(num_elements, edges, 0, 7);
+  std::cout << "flow: " << max_flow << "\n";
+  assert(fabs(max_flow - 0.735802) < 1e-5);
 }
 
 void test_mbf() {

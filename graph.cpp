@@ -189,3 +189,21 @@ double graph_get_edge_weight(const graph_t &graph, idx_t source,
       return neighbours[i].weights[weight_idx];
   throw std::runtime_error("Edge weight not found.");
 }
+
+edge* graph_get_edge(graph_t &graph, idx_t source,
+                             idx_t destination) {
+  edge_c neighbours = graph[source].edges;
+  for (idx_t i = 0; i < neighbours.size(); ++i)
+    if (neighbours[i].destination == destination)
+      return &neighbours[i];
+  throw std::runtime_error("Edge not found.");
+}
+
+idx_t graph_get_edge_index(graph_t &graph, idx_t source,
+                             idx_t destination){
+  edge_c neighbours = graph[source].edges;
+  for (idx_t i = 0; i < neighbours.size(); ++i)
+    if (neighbours[i].destination == destination)
+      return i;
+  throw std::runtime_error("Edge not found.");
+}

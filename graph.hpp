@@ -65,4 +65,10 @@ std::vector<std::string> str_split(const std::string &s, char delim);
 
 bool comp_weight_1(const raw_edge &x, const raw_edge &y);
 
+edge* graph_get_edge(graph_t &graph, idx_t source,
+                             idx_t destination);
+
+idx_t graph_get_edge_index(graph_t &graph, idx_t source,
+                             idx_t destination);
+
 #endif
