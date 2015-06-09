@@ -22,7 +22,7 @@ typedef std::vector<vertex> graph_t;
 
 enum graph_direction { DIRECTED, UNDIRECTED };
 
-struct raw_edge{
+struct raw_edge {
   idx_t source;
   idx_t destination;
   weight_c weights;
@@ -38,18 +38,27 @@ struct vertex {
   attr_c attributes;
 };
 
-void graph_init_from_edges(graph_t &graph, idx_t num_elements, redge_c &edges, graph_direction dir = DIRECTED);
+void graph_init_from_edges(graph_t &graph, idx_t num_elements, redge_c &edges,
+                           graph_direction dir = DIRECTED);
 
-idx_t graph_init(graph_t &graph, std::string filename, int num_weights, graph_direction dir = DIRECTED);
+idx_t edge_init_from_graph(const graph_t &graph, redge_c &edges,
+                           graph_direction dir = DIRECTED);
 
-idx_t edge_init(redge_c &edges, std::string filename, int num_weights, graph_direction dir = DIRECTED);
+idx_t graph_init(graph_t &graph, std::string filename, int num_weights,
+                 graph_direction dir = DIRECTED);
+
+idx_t edge_init(redge_c &edges, std::string filename, int num_weights,
+                graph_direction dir = DIRECTED);
+
+idx_t graph_init_flow(graph_t &graph, std::string filename, int num_weights,
+                      graph_direction dir = DIRECTED);
 
 // does not check for existance of edge
 double graph_get_edge_weight(const graph_t &graph, idx_t source,
                              idx_t destination, unsigned weight_idx = 0);
 
 unsigned graph_traverse_depth_first(const graph_t &graph, idx_t start_vertex,
-                                std::vector<idx_t> &path);
+                                    std::vector<idx_t> &path);
 
 void graph_traverse_depth_first_r(const graph_t &graph, idx_t current_vertex,
                                   std::vector<bool> &visited,
@@ -65,10 +74,12 @@ std::vector<std::string> str_split(const std::string &s, char delim);
 
 bool comp_weight_1(const raw_edge &x, const raw_edge &y);
 
-edge* graph_get_edge(graph_t &graph, idx_t source,
-                             idx_t destination);
+edge *graph_get_edge(graph_t &graph, idx_t source, idx_t destination);
 
-idx_t graph_get_edge_index(graph_t &graph, idx_t source,
-                             idx_t destination);
+idx_t graph_get_edge_index(graph_t &graph, idx_t source, idx_t destination);
 
+idx_t graph_to_edgelist(graph_t &graph, redge_c &edges);
+
+bool graph_has_edge(graph_t &graph, idx_t source,
+                             idx_t destination);
 #endif

@@ -11,6 +11,7 @@
 #include "dijkstra_sp.hpp"
 #include "moore_bellman_ford_sp.hpp"
 #include "ford_fulkerson.hpp"
+#include "min_cost_flow2.hpp"
 
 using std::cout;
 
@@ -25,6 +26,8 @@ void test_branch_and_bound();
 void test_dijkstra();
 void test_mbf();
 void test_ford_fulkerson();
+void test_cycle_cancel();
+void test_succ_shortest_path();
 
 int main(int argc, char **argv) {
   // test_graph_and_components();
@@ -35,13 +38,38 @@ int main(int argc, char **argv) {
   // test_double_tree_tsp();
   // test_all_paths();
   // test_branch_and_bound();
-  // test_mbf();
-  // test_dijkstra();
-  test_ford_fulkerson();
+   //test_mbf();
+   //test_dijkstra();
+  //test_ford_fulkerson();
+  test_cycle_cancel();
+  //test_succ_shortest_path();
 
   cout << "ALL DONE.\n";
   return 0;
 }
+
+void test_cycle_cancel(){
+  cout << "=== CYCLE CANCEL ALGORTIHM ===\n";
+  graph_t graph;
+  idx_t num_vertices = graph_init_flow(graph,"graphs/Kostenminimal1.txt", 2);
+  cycle_canceling_mcf(graph, 0, 1, 0);
+
+  //graph.clear();
+  //num_vertices = graph_init_flow(graph,"graphs/Kostenminimal3.txt", 2);
+  //cycle_canceling_mcf(graph);
+
+  //graph.clear();
+  //num_vertices = graph_init_flow(graph,"graphs/Kostenminimal4.txt", 2);
+  //cycle_canceling_mcf(graph);
+}
+
+void test_succ_shortest_path(){
+  cout << "=== SUCCESSIVE SHORTEST PATH ===\n";
+  graph_t graph;
+  idx_t num_vertices = graph_init_flow(graph,"graphs/Kostenminimal1.txt", 2);
+  successive_shortest_paths_mcf(graph,0,1);
+}
+
 void test_ford_fulkerson() {
   cout << "=== FORD FULKERSON ===\n";
 
