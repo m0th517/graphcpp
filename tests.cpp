@@ -51,12 +51,43 @@ int main(int argc, char **argv) {
 void test_cycle_cancel(){
   cout << "=== CYCLE CANCEL ALGORTIHM ===\n";
   graph_t graph;
+  cout << "Kostenminimal 1:\n";
   idx_t num_vertices = graph_init_flow(graph,"graphs/Kostenminimal1.txt", 2);
-  cycle_canceling_mcf(graph, 0, 1, 0);
+  double min_cost = cycle_canceling_mcf(graph, 0, 1, 0);
+  assert(min_cost == 3);
+  cout << "min cost = " << min_cost << "\n";
+
+  cout << "Kostenminimal 2:\n";
+  graph.clear();
+  num_vertices = graph_init_flow(graph, "graphs/Kostenminimal2.txt", 2);
+  try {
+    cycle_canceling_mcf(graph, 0, 1, 0);
+  }
+  catch (std::runtime_error &e) {
+    cout << e.what() << "\n";
+  }
+
+  cout << "Kostenminimal 3:\n";
+  graph.clear();
+  num_vertices = graph_init_flow(graph, "graphs/Kostenminimal3.txt", 2);
+  try {
+    cycle_canceling_mcf(graph, 0, 1, 0);
+  }
+  catch (std::runtime_error &e) {
+    cout << e.what() << "\n";
+  }
+
+  cout << "Kostenminimal 4:\n";
+  graph.clear();
+  num_vertices = graph_init_flow(graph,"graphs/Kostenminimal4.txt", 2);
+  min_cost = cycle_canceling_mcf(graph, 0, 1, 0);
+  //assert(min_cost == 3);
+  assert(num_vertices == 100);
+  cout << "min cost = " << min_cost << "\n";
 
   //graph.clear();
   //num_vertices = graph_init_flow(graph,"graphs/Kostenminimal3.txt", 2);
-  //cycle_canceling_mcf(graph);
+  //min_cost = cycle_canceling_mcf(graph,0,1,0);
 
   //graph.clear();
   //num_vertices = graph_init_flow(graph,"graphs/Kostenminimal4.txt", 2);
