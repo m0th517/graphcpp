@@ -1,8 +1,8 @@
 #ifndef CYCLE_MCF_HPP
 #define CYCLE_MCF_HPP
 
-double get_cycle_cost(graph_t &graph, vector<idx_t> &parent, idx_t &cycle_start, vector<idx_t> &cycle,
-                      unsigned cost_idx) {
+double get_cycle_cost(graph_t &graph, vector<idx_t> &parent, idx_t &cycle_start,
+                      vector<idx_t> &cycle, unsigned cost_idx) {
   idx_t curr, counter;
   double cycle_cost;
 
@@ -84,17 +84,16 @@ bool find_augmenting_cycle(graph_t &graph, unsigned cost_idx,
 
 double cycle_canceling_mcf(const graph_t &graph, unsigned cost_idx,
                            unsigned capacity_idx, unsigned balance_idx = 0) {
-  double balance, demand, supply, bflow, cycle_cost;
+  double balance, demand, supply, bflow, cycle_cost, ssource_cap;
   idx_t cycle_start;
   idx_t ssource = graph.size();
   idx_t ssink = ssource + 1;
-  graph_t residual_graph;
+  graph_t residual_graph, sgraph;
   redge_c sedges;
-  vector<idx_t> prev;
-  vector<idx_t> cycle;
+  vector<idx_t> prev, cycle;
 
   // graph that contains a super- source and sink
-  graph_t sgraph = graph;
+  sgraph = graph;
   sgraph.push_back({{}, {0}});
   sgraph.push_back({{}, {0}});
 
@@ -113,7 +112,8 @@ double cycle_canceling_mcf(const graph_t &graph, unsigned cost_idx,
     }
   }
 
-  double ssource_cap = sgraph[ssource].attributes[0];
+  // accumulated supply capacity
+  ssource_cap = sgraph[ssource].attributes[0];
 
   // initial b-flow and residual graph
   graph_to_edgelist(sgraph, sedges);
@@ -135,8 +135,8 @@ double cycle_canceling_mcf(const graph_t &graph, unsigned cost_idx,
     }
   }
 
-  while (find_augmenting_cycle(residual_graph, cost_idx,
-                               capacity_idx, prev,cycle, cycle_cost)) {
+  while (find_augmenting_cycle(residual_graph, cost_idx, capacity_idx, prev,
+                               cycle, cycle_cost)) {
     // find max flow along cycle and cost
     double capacity, cost = 0;
     double max_flow = std::numeric_limits<double>::max();
