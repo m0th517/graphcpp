@@ -1,8 +1,8 @@
 #ifndef MIN_COST_FLOW_HPP
 #define MIN_COST_FLOW_HPP
 
-double get_cycle_cost(graph_t &graph, vector<idx_t> &parent, idx_t cycle_start,
-                  unsigned cost_idx) {
+double get_cycle_cost(graph_t &graph, vector<idx_t> &parent, idx_t &cycle_start, vector<idx_t> &cycle,
+                      unsigned cost_idx) {
   idx_t curr, counter;
   double cycle_cost;
 
@@ -11,102 +11,71 @@ double get_cycle_cost(graph_t &graph, vector<idx_t> &parent, idx_t cycle_start,
     cycle_start = parent[cycle_start];
 
   // determine cost of cycle
+  cycle.clear();
   cycle_cost = 0;
-  // loop finished when cycle found or there is no cycle ( count > num_vertices )
+  // finished when cycle found or there is no cycle (count > num_vertices)
+  cycle.push_back(parent[cycle_start]);
   for (curr = parent[cycle_start], counter = 0; counter < graph.size();
        curr = parent[curr], ++counter) {
-    // cout << parent[curr] << " -> " << curr << "\n";
     cycle_cost += graph_get_edge_weight(graph, parent[curr], curr, cost_idx);
+    cycle.push_back(parent[curr]);
     if (cycle_start == curr)
       break;
   }
 
-  if(counter >= graph.size())
-      throw std::runtime_error("get_cycle_cost error. no cycle found");
+  std::reverse(cycle.begin(), cycle.end());
+
+  if (counter >= graph.size())
+    throw std::runtime_error("get_cycle_cost error. no cycle found");
 
   return cycle_cost;
 }
 
-bool find_augmenting_cycle(graph_t &graph, idx_t source, idx_t target,
-                           unsigned cost_idx, unsigned capacity_idx,
-                           vector<idx_t> &prev, idx_t &cycle_start,
-                           double &cycle_cost) {
+// modified moore bellman ford algorithm
+bool find_augmenting_cycle(graph_t &graph, unsigned cost_idx,
+                           unsigned capacity_idx, vector<idx_t> &prev,
+                           vector<idx_t> &cycle, double &cycle_cost) {
   raw_edge edge;
   redge_c edges;
   idx_t num_vertices = graph_to_edgelist(graph, edges);
 
-  cout << "old: " << edges.size() << "\n";
   // remove edges with no capacity
   edges.erase(std::remove_if(edges.begin(), edges.end(),
                              [capacity_idx](raw_edge &edge) {
-    return edge.weights[capacity_idx] <= 0;
-  }));
-  cout << "new: " << edges.size() << "\n";
-
-  //for (idx_t i = 0; i < edges.size(); ++i) {
-      //cout << edges[i].weights.size() << "\t"<<i << "\n";
-      //cout << edges[i].source << " -> " << edges[i].destination << "\t\t" << std::flush 
-           //<< edges[i].weights[0] << "\t" << edges[i].weights[1] << "\n";
-    //}
-  //cout << "-................\n";
+                return edge.weights[capacity_idx] <= 0;
+              }),
+              edges.end());
 
   idx_t num_edges = edges.size();
-  prev = vector<idx_t>(num_vertices, -1);
-  vector<double> dist(num_vertices, std::numeric_limits<double>::max());
 
-  dist[source] = 0;
+  for (idx_t source = 0; source < graph.size(); ++source) {
+    cycle.clear();
+    prev = vector<idx_t>(num_vertices, -1);
+    vector<double> dist(num_vertices, std::numeric_limits<double>::max());
 
-  for (idx_t i = 0; i < (num_vertices - 1); ++i) {
-    for (idx_t e = 0; e < num_edges; ++e) {
-      edge = edges[e];
+    dist[source] = 0;
 
-      if ((dist[edge.source] + edge.weights[cost_idx]) <
-          dist[edge.destination]) {
-        dist[edge.destination] = dist[edge.source] + edge.weights[cost_idx];
-        prev[edge.destination] = edge.source;
-      }
-    }
-  }
+    for (idx_t i = 0; i < (num_vertices - 1); ++i) {
+      for (idx_t e = 0; e < num_edges; ++e) {
+        edge = edges[e];
 
-  // for (idx_t e = 0; e < dist.size(); ++e) {
-  // cout << e << "\t" << dist[e] << "\n";
-  //}
-
-  for (idx_t e = 0; e < num_edges; ++e) {
-    edge = edges[e];
-    if ((dist[edge.source] + edge.weights[cost_idx]) < dist[edge.destination]) {
-      // run backward to make sure we are in the cycle
-      cycle_start = edge.source;
-      //for (idx_t i = 0; i < edges.size(); ++i)
-        //cycle_start = prev[cycle_start];
-
-      //// determine cost of cycle
-      //cycle_cost = 0;
-      //for (idx_t curr = prev[cycle_start];; curr = prev[curr]) {
-        //// cout << prev[curr] << " -> " << curr << "\n";
-        //cycle_cost += graph_get_edge_weight(graph, prev[curr], curr, cost_idx);
-        //if (cycle_start == curr)
-          //break;
-      //}
-
-      cycle_cost = get_cycle_cost(graph,prev,cycle_start,cost_idx);
-
-      // if cost not negative, find another that is
-      if(cycle_cost >= 0){
-          cout << "looking for alternatives\n";
-        for (idx_t i = 0; i < graph.size(); ++i) {
-          if (i == source)
-            continue;
-          cycle_cost = get_cycle_cost(graph, prev, i, cost_idx);
-          if( cycle_cost < 0 )
-              break;
+        if ((dist[edge.source] + edge.weights[cost_idx]) <
+            dist[edge.destination]) {
+          dist[edge.destination] = dist[edge.source] + edge.weights[cost_idx];
+          prev[edge.destination] = edge.source;
         }
       }
+    }
 
-cout << cycle_cost << "\n";
-//exit(1);
+    for (idx_t e = 0; e < num_edges; ++e) {
+      edge = edges[e];
+      if ((dist[edge.source] + edge.weights[cost_idx]) <
+          dist[edge.destination]) {
+        idx_t cycle_start = edge.source;
+        cycle_cost = get_cycle_cost(graph, prev, cycle_start, cycle, cost_idx);
 
-      return true;
+        return true;
+      }
     }
   }
 
@@ -122,6 +91,7 @@ double cycle_canceling_mcf(const graph_t &graph, unsigned cost_idx,
   graph_t residual_graph;
   redge_c sedges;
   vector<idx_t> prev;
+  vector<idx_t> cycle;
 
   // graph that contains a super- source and sink
   graph_t sgraph = graph;
@@ -165,53 +135,8 @@ double cycle_canceling_mcf(const graph_t &graph, unsigned cost_idx,
     }
   }
 
-  while (find_augmenting_cycle(residual_graph, ssource, ssink, cost_idx,
-                               capacity_idx, prev, cycle_start, cycle_cost)) {
-    // redge_c residual_edges;
-    // graph_to_edgelist(residual_graph, residual_edges);
-    // for (idx_t i = 0; i < residual_edges.size(); ++i) {
-    // if(residual_edges[i].weights[1]>0)
-    // cout << residual_edges[i].source << " -> "
-    //<< residual_edges[i].destination << "\t\t"
-    //<< residual_edges[i].weights[0] << "\t"
-    //<< residual_edges[i].weights[1] << "\n";
-    //}
-
-    // there is a cycle but it is not on our current path, explore other
-    // startpoints
-    //if (cycle_cost >= 0)
-      //for (idx_t i = 0; cycle_cost > 0 || i < residual_graph.size(); ++i) {
-        //if (i == ssource || i == ssink)
-          //continue;
-        //find_augmenting_cycle(residual_graph, i, ssink, cost_idx, capacity_idx,
-                              //prev, cycle_start, cycle_cost);
-        //cout << "i: " << i << "\n";
-        //cout << "start: " << cycle_start << "\n";
-        //cout << "next cost: " << cycle_cost << "\n";
-      //}
-    if (cycle_cost >= 0){
-        cout << "ending because no negative cycle found, which is bad\n";
-      break;
-    }
-
-    // for(idx_t i = 0; i < prev.size(); ++i)
-    // cout << prev[i] << "\n";
-
-    // run backwards until we find the cycle start again
-    vector<idx_t> cycle{cycle_start};
-    for (idx_t curr = prev[cycle_start]; curr != cycle_start;
-         curr = prev[curr]) {
-      cout << "loopy\n";
-      cycle.push_back(curr);
-    }
-    cycle.push_back(cycle_start);
-    std::reverse(cycle.begin(), cycle.end());
-
-    cout << "cycle:\n";
-    for (unsigned i = 0; i < cycle.size(); ++i) {
-      cout << cycle[i] << "\n";
-    }
-
+  while (find_augmenting_cycle(residual_graph, cost_idx,
+                               capacity_idx, prev,cycle, cycle_cost)) {
     // find max flow along cycle and cost
     double capacity, cost = 0;
     double max_flow = std::numeric_limits<double>::max();
@@ -221,9 +146,6 @@ double cycle_canceling_mcf(const graph_t &graph, unsigned cost_idx,
       cost += graph_get_edge_weight(residual_graph, from, to, cost_idx);
       max_flow = std::fmin(max_flow, capacity);
     }
-
-    cout << "cost: " << cost << "\n"
-         << "maxflow: " << max_flow << "\n";
 
     // send flow around cycle
     for (idx_t t = 1; t < cycle.size(); ++t) {
@@ -246,12 +168,11 @@ double cycle_canceling_mcf(const graph_t &graph, unsigned cost_idx,
     double path_cost = -edges[i].weights[cost_idx];
     double capacity = edges[i].weights[capacity_idx];
 
-    if (!graph_has_edge(sgraph, from, to)) {
+    if (!graph_has_edge(sgraph, from, to) && capacity > 0) {
       max_flow += capacity;
-      min_cost += path_cost;
+      min_cost += path_cost * capacity;
     }
   }
-  // cout <<"maxflow: " << flow << "\n max cost: " << cost << "\n";
 
   return min_cost;
 }
