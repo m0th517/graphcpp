@@ -1,5 +1,5 @@
-#ifndef MIN_COST_FLOW_HPP
-#define MIN_COST_FLOW_HPP
+#ifndef CYCLE_MCF_HPP
+#define CYCLE_MCF_HPP
 
 double get_cycle_cost(graph_t &graph, vector<idx_t> &parent, idx_t &cycle_start, vector<idx_t> &cycle,
                       unsigned cost_idx) {
@@ -175,12 +175,6 @@ double cycle_canceling_mcf(const graph_t &graph, unsigned cost_idx,
   }
 
   return min_cost;
-}
-
-double successive_shortest_paths_mcf(const graph_t &graph, unsigned cost_idx,
-                                     unsigned capacity_idx) {
-
-  return 0;
 }
 
 #endif

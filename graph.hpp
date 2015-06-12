@@ -82,4 +82,7 @@ idx_t graph_to_edgelist(graph_t &graph, redge_c &edges);
 
 bool graph_has_edge(graph_t &graph, idx_t source,
                              idx_t destination);
+
+void print_edgelist(redge_c &edges);
+
 #endif

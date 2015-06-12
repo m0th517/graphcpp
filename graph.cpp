@@ -282,3 +282,14 @@ idx_t graph_to_edgelist(graph_t &graph, redge_c &edges){
 
     return graph.size();
 }
+
+void print_edgelist(redge_c &edges) {
+  using std::cout;
+  for (idx_t e = 0; e < edges.size(); ++e) {
+    cout << edges[e].source << " -> " << edges[e].destination << "\t\t";
+    for (unsigned i = 0; i < edges[e].weights.size(); ++i) {
+      cout << edges[e].weights[i] << "\t";
+    }
+    cout << "\n";
+  }
+}

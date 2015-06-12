@@ -11,7 +11,8 @@
 #include "dijkstra_sp.hpp"
 #include "moore_bellman_ford_sp.hpp"
 #include "ford_fulkerson.hpp"
-#include "min_cost_flow2.hpp"
+#include "cycle_canceling_mcf.hpp"
+#include "successive_sp_mcf.hpp"
 
 using std::cout;
 
@@ -38,24 +39,24 @@ int main(int argc, char **argv) {
   // test_double_tree_tsp();
   // test_all_paths();
   // test_branch_and_bound();
-   //test_mbf();
-   //test_dijkstra();
-  //test_ford_fulkerson();
-  test_cycle_cancel();
-  //test_succ_shortest_path();
+  // test_mbf();
+  // test_dijkstra();
+  // test_ford_fulkerson();
+  // test_cycle_cancel();
+  test_succ_shortest_path();
 
   cout << "ALL DONE.\n";
   return 0;
 }
 
-void test_cycle_cancel(){
+void test_cycle_cancel() {
   cout << "=== CYCLE CANCEL ALGORTIHM ===\n";
-    double min_cost;
-    idx_t num_vertices;
+  double min_cost;
+  idx_t num_vertices;
   graph_t graph;
 
   cout << "Kostenminimal 1:\n";
-  num_vertices = graph_init_flow(graph,"graphs/Kostenminimal1.txt", 2);
+  num_vertices = graph_init_flow(graph, "graphs/Kostenminimal1.txt", 2);
   min_cost = cycle_canceling_mcf(graph, 0, 1, 0);
   assert(min_cost == 3);
   cout << "min cost = " << min_cost << "\n";
@@ -82,31 +83,67 @@ void test_cycle_cancel(){
 
   cout << "\nKostenminimal 4:\n";
   graph.clear();
-  num_vertices = graph_init_flow(graph,"graphs/Kostenminimal4.txt", 2);
+  num_vertices = graph_init_flow(graph, "graphs/Kostenminimal4.txt", 2);
   min_cost = cycle_canceling_mcf(graph, 0, 1, 0);
   assert(min_cost == 1537);
   assert(num_vertices == 100);
   cout << "min cost = " << min_cost << "\n";
 
-
   cout << "\nKostenminimal 5:\n";
   graph.clear();
-  num_vertices = graph_init_flow(graph,"graphs/Kostenminimal5.txt", 2);
-  try {
+  num_vertices = graph_init_flow(graph, "graphs/Kostenminimal5.txt", 2);
   min_cost = cycle_canceling_mcf(graph, 0, 1, 0);
-  }
-  catch (std::runtime_error &e) {
-    cout << e.what() << "\n";
-  }
   cout << "min cost = " << min_cost << "\n";
   assert(min_cost == 0);
 }
 
-void test_succ_shortest_path(){
+void test_succ_shortest_path() {
   cout << "=== SUCCESSIVE SHORTEST PATH ===\n";
+
+  double min_cost;
+  idx_t num_vertices;
   graph_t graph;
-  idx_t num_vertices = graph_init_flow(graph,"graphs/Kostenminimal1.txt", 2);
-  successive_shortest_paths_mcf(graph,0,1);
+
+  cout << "Kostenminimal 1:\n";
+  num_vertices = graph_init_flow(graph, "graphs/Kostenminimal1.txt", 2);
+  min_cost = successive_shortest_paths_mcf(graph, 0, 1, 0);
+  assert(min_cost == 3);
+  cout << "min cost = " << min_cost << "\n";
+
+  //cout << "\nKostenminimal 2:\n";
+  //graph.clear();
+  //num_vertices = graph_init_flow(graph, "graphs/Kostenminimal2.txt", 2);
+  //try {
+    //successive_shortest_paths_mcf(graph, 0, 1, 0);
+  //}
+  //catch (std::runtime_error &e) {
+    //cout << e.what() << "\n";
+  //}
+
+  //cout << "\nKostenminimal 3:\n";
+  //graph.clear();
+  //num_vertices = graph_init_flow(graph, "graphs/Kostenminimal3.txt", 2);
+  //try {
+    //successive_shortest_paths_mcf(graph, 0, 1, 0);
+  //}
+  //catch (std::runtime_error &e) {
+    //cout << e.what() << "\n";
+  //}
+
+  //cout << "\nKostenminimal 4:\n";
+  //graph.clear();
+  //num_vertices = graph_init_flow(graph, "graphs/Kostenminimal4.txt", 2);
+  //min_cost = successive_shortest_paths_mcf(graph, 0, 1, 0);
+  //assert(min_cost == 1537);
+  //assert(num_vertices == 100);
+  //cout << "min cost = " << min_cost << "\n";
+
+  //cout << "\nKostenminimal 5:\n";
+  //graph.clear();
+  //num_vertices = graph_init_flow(graph, "graphs/Kostenminimal5.txt", 2);
+  //min_cost = successive_shortest_paths_mcf(graph, 0, 1, 0);
+  //cout << "min cost = " << min_cost << "\n";
+  //assert(min_cost == 0);
 }
 
 void test_ford_fulkerson() {
@@ -399,7 +436,7 @@ void test_graph_and_components() {
   graph_traverse_depth_first(graph, 0, path);
   assert(path.size() == 15);
 
-  std::vector<idx_t> expected{ 0, 6, 9, 13 };
+  std::vector<idx_t> expected{0, 6, 9, 13};
   for (unsigned i = 0; i < expected.size(); ++i)
     assert(path[i] == expected[i]);
 
@@ -407,14 +444,14 @@ void test_graph_and_components() {
   graph_traverse_depth_first(graph, 4, path);
   assert(path.size() == 15);
 
-  std::vector<idx_t> expected2{ 4, 7, 12 };
+  std::vector<idx_t> expected2{4, 7, 12};
   for (unsigned i = 0; i < expected2.size(); ++i)
     assert(path[i] == expected2[i]);
 
   path.clear();
   graph_traverse_breadth_first(graph, 0, path);
 
-  std::vector<idx_t> expected3{ 0, 6, 9, 13 };
+  std::vector<idx_t> expected3{0, 6, 9, 13};
   for (unsigned i = 0; i < expected3.size(); ++i)
     assert(path[i] == expected3[i]);
 
