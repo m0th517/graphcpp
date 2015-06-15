@@ -8,11 +8,9 @@ double successive_shortest_paths_mcf(const graph_t &graph, unsigned cost_idx,
                                      unsigned balance_idx) {
   double balance, demand, supply, bflow, cycle_cost;
   graph_t residual_graph;
-  redge_c sedges, residual_edges;
+  redge_c edges, residual_edges;
 
-  // graph that contains a super- source and sink
-  graph_t sgraph = graph;
-  graph_to_edgelist(sgraph, sedges);
+  graph_to_edgelist(graph, edges);
 
   // determine demand and supply
   demand = supply = 0;
@@ -29,9 +27,9 @@ double successive_shortest_paths_mcf(const graph_t &graph, unsigned cost_idx,
         "The Network has not enough supply to satisfy the demand.");
 
   // create residual graph
-  residual_graph.resize(sgraph.size());
-  for (idx_t i = 0; i < sedges.size(); ++i) {
-    raw_edge e = sedges[i];
+  residual_graph.resize(graph.size());
+  for (idx_t i = 0; i < edges.size(); ++i) {
+    raw_edge e = edges[i];
     residual_graph[e.source].edges.push_back({e.destination, e.weights});
     residual_graph[e.destination].edges.push_back({e.source, e.weights});
     residual_graph[e.destination].edges.back().weights[cost_idx] =
@@ -40,8 +38,8 @@ double successive_shortest_paths_mcf(const graph_t &graph, unsigned cost_idx,
   }
 
   // also copy over vertex attributes
-  for (idx_t i = 0; i < sgraph.size(); ++i)
-    residual_graph[i].attributes = sgraph[i].attributes;
+  for (idx_t i = 0; i < graph.size(); ++i)
+    residual_graph[i].attributes = graph[i].attributes;
 
   // full flow on edges with negative cost
   graph_to_edgelist(residual_graph, residual_edges);
@@ -84,7 +82,7 @@ double successive_shortest_paths_mcf(const graph_t &graph, unsigned cost_idx,
                          }),
                          residual_edges.end());
 
-    for (idx_t i = 0; i < sgraph.size(); ++i) {
+    for (idx_t i = 0; i < graph.size(); ++i) {
       local_balance = residual_graph[i].attributes[balance_idx];
       if (local_balance < 0)
         neg_balances.push_back(i);
@@ -111,7 +109,7 @@ double successive_shortest_paths_mcf(const graph_t &graph, unsigned cost_idx,
 
     // this section is reached when no path could be found.
     // if not all balances are zero the network is to small or not connected.
-    for (idx_t i = 0; i < sgraph.size(); ++i) {
+    for (idx_t i = 0; i < graph.size(); ++i) {
       local_balance = residual_graph[i].attributes[balance_idx];
       if (local_balance != 0)
         throw std::runtime_error(
@@ -162,7 +160,7 @@ double successive_shortest_paths_mcf(const graph_t &graph, unsigned cost_idx,
     double path_cost = -residual_edges[i].weights[cost_idx];
     double capacity = residual_edges[i].weights[capacity_idx];
 
-    if (!graph_has_edge(sgraph, from, to) && capacity > 0) {
+    if (!graph_has_edge(graph, from, to) && capacity > 0) {
       max_flow += capacity;
       min_cost += path_cost * capacity;
     }

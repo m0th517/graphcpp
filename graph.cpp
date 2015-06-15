@@ -260,7 +260,7 @@ idx_t graph_get_edge_index(graph_t &graph, idx_t source,
   throw std::runtime_error("Edge not found.");
 }
 
-bool graph_has_edge(graph_t &graph, idx_t source,
+bool graph_has_edge(const graph_t &graph, idx_t source,
                              idx_t destination){
   edge_c neighbours = graph[source].edges;
   for (idx_t i = 0; i < neighbours.size(); ++i)
@@ -269,7 +269,7 @@ bool graph_has_edge(graph_t &graph, idx_t source,
   return false;
 }
 
-idx_t graph_to_edgelist(graph_t &graph, redge_c &edges){
+idx_t graph_to_edgelist(const graph_t &graph, redge_c &edges){
     edges.clear();
 
     for(idx_t i = 0; i < graph.size(); ++i){

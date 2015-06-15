@@ -78,9 +78,9 @@ edge *graph_get_edge(graph_t &graph, idx_t source, idx_t destination);
 
 idx_t graph_get_edge_index(graph_t &graph, idx_t source, idx_t destination);
 
-idx_t graph_to_edgelist(graph_t &graph, redge_c &edges);
+idx_t graph_to_edgelist(const graph_t &graph, redge_c &edges);
 
-bool graph_has_edge(graph_t &graph, idx_t source,
+bool graph_has_edge(const graph_t &graph, idx_t source,
                              idx_t destination);
 
 void print_edgelist(redge_c &edges);
