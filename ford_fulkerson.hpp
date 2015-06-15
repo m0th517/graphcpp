@@ -11,6 +11,7 @@ bool bfs(const graph_t &graph, idx_t sink, idx_t target, vector<idx_t> &parent,
   std::vector<bool> visited(graph.size(), false);
   visited[sink] = true;
   queue.push_back(sink);
+  parent.resize(graph.size());
   parent[sink] = -1;
 
   while (!queue.empty()) {

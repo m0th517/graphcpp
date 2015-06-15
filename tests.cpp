@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
   // test_mbf();
   // test_dijkstra();
   // test_ford_fulkerson();
-  // test_cycle_cancel();
+  test_cycle_cancel();
   test_succ_shortest_path();
 
   cout << "ALL DONE.\n";
@@ -110,40 +110,40 @@ void test_succ_shortest_path() {
   assert(min_cost == 3);
   cout << "min cost = " << min_cost << "\n";
 
-  //cout << "\nKostenminimal 2:\n";
-  //graph.clear();
-  //num_vertices = graph_init_flow(graph, "graphs/Kostenminimal2.txt", 2);
-  //try {
-    //successive_shortest_paths_mcf(graph, 0, 1, 0);
-  //}
-  //catch (std::runtime_error &e) {
-    //cout << e.what() << "\n";
-  //}
+  cout << "\nKostenminimal 2:\n";
+  graph.clear();
+  num_vertices = graph_init_flow(graph, "graphs/Kostenminimal2.txt", 2);
+  try {
+    successive_shortest_paths_mcf(graph, 0, 1, 0);
+  }
+  catch (std::runtime_error &e) {
+    cout << e.what() << "\n";
+  }
 
-  //cout << "\nKostenminimal 3:\n";
-  //graph.clear();
-  //num_vertices = graph_init_flow(graph, "graphs/Kostenminimal3.txt", 2);
-  //try {
-    //successive_shortest_paths_mcf(graph, 0, 1, 0);
-  //}
-  //catch (std::runtime_error &e) {
-    //cout << e.what() << "\n";
-  //}
+  cout << "\nKostenminimal 3:\n";
+  graph.clear();
+  num_vertices = graph_init_flow(graph, "graphs/Kostenminimal3.txt", 2);
+  try {
+    successive_shortest_paths_mcf(graph, 0, 1, 0);
+  }
+  catch (std::runtime_error &e) {
+    cout << e.what() << "\n";
+  }
 
-  //cout << "\nKostenminimal 4:\n";
-  //graph.clear();
-  //num_vertices = graph_init_flow(graph, "graphs/Kostenminimal4.txt", 2);
-  //min_cost = successive_shortest_paths_mcf(graph, 0, 1, 0);
-  //assert(min_cost == 1537);
-  //assert(num_vertices == 100);
-  //cout << "min cost = " << min_cost << "\n";
+  cout << "\nKostenminimal 4:\n";
+  graph.clear();
+  num_vertices = graph_init_flow(graph, "graphs/Kostenminimal4.txt", 2);
+  min_cost = successive_shortest_paths_mcf(graph, 0, 1, 0);
+  assert(min_cost == 1537);
+  assert(num_vertices == 100);
+  cout << "min cost = " << min_cost << "\n";
 
-  //cout << "\nKostenminimal 5:\n";
-  //graph.clear();
-  //num_vertices = graph_init_flow(graph, "graphs/Kostenminimal5.txt", 2);
-  //min_cost = successive_shortest_paths_mcf(graph, 0, 1, 0);
-  //cout << "min cost = " << min_cost << "\n";
-  //assert(min_cost == 0);
+  cout << "\nKostenminimal 5:\n";
+  graph.clear();
+  num_vertices = graph_init_flow(graph, "graphs/Kostenminimal5.txt", 2);
+  min_cost = successive_shortest_paths_mcf(graph, 0, 1, 0);
+  cout << "min cost = " << min_cost << "\n";
+  assert(min_cost == 0);
 }
 
 void test_ford_fulkerson() {
