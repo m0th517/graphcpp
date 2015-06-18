@@ -6,25 +6,19 @@
 double successive_shortest_paths_mcf(const graph_t &graph, unsigned cost_idx,
                                      unsigned capacity_idx,
                                      unsigned balance_idx) {
-  double balance, demand, supply, bflow, cycle_cost;
+  double balance, bflow, cycle_cost;
   graph_t residual_graph;
   redge_c edges, residual_edges;
 
   graph_to_edgelist(graph, edges);
 
   // determine demand and supply
-  demand = supply = 0;
-  for (idx_t i = 0; i < graph.size(); ++i) {
-    balance = graph[i].attributes[balance_idx];
-    if (balance > 0)
-      supply += balance;
-    else if (balance < 0)
-      demand += balance;
-  }
+  balance = 0;
+  for (idx_t i = 0; i < graph.size(); ++i)
+    balance += graph[i].attributes[balance_idx];
 
-  if (supply + demand < 0)
-    throw std::runtime_error(
-        "The Network has not enough supply to satisfy the demand.");
+  if (balance != 0)
+    throw std::runtime_error("The Networks supply and demand are unbalanced.");
 
   // create residual graph
   residual_graph.resize(graph.size());
@@ -72,7 +66,7 @@ double successive_shortest_paths_mcf(const graph_t &graph, unsigned cost_idx,
     neg_balances.clear();
 
     graph_to_edgelist(residual_graph, residual_edges);
-    //print_edgelist(residual_edges);
+    // print_edgelist(residual_edges);
 
     // remove edges with no capacity
     residual_edges.erase(std::remove_if(residual_edges.begin(),
@@ -112,12 +106,11 @@ double successive_shortest_paths_mcf(const graph_t &graph, unsigned cost_idx,
     for (idx_t i = 0; i < graph.size(); ++i) {
       local_balance = residual_graph[i].attributes[balance_idx];
       if (local_balance != 0)
-        throw std::runtime_error(
-            "The Network has not enough supply to satisfy the demand.");
+        throw std::runtime_error("The Network is too small or not connected.");
     }
     break;
 
-    // exit point for nested for loop above
+  // exit point for nested for loop above
   FOUND_ST_PATH:
 
     // compute shortest (cheapest) path from s to t
@@ -133,10 +126,10 @@ double successive_shortest_paths_mcf(const graph_t &graph, unsigned cost_idx,
     }
 
     // find the amount of flow we can send across the path
-    double max_flow = std::fmin(
-        residual_graph[local_source].attributes[balance_idx],
-        -residual_graph[local_sink].attributes[balance_idx]);
-    max_flow = std::fmin(max_flow,max_path_flow);
+    double max_flow =
+        std::fmin(residual_graph[local_source].attributes[balance_idx],
+                  -residual_graph[local_sink].attributes[balance_idx]);
+    max_flow = std::fmin(max_flow, max_path_flow);
 
     // send min flow along path
     for (idx_t t = 1; t < st_path.size(); ++t) {

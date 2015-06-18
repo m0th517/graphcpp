@@ -112,17 +112,18 @@ double cycle_canceling_mcf(const graph_t &graph, unsigned cost_idx,
     }
   }
 
-  // accumulated supply capacity
-  ssource_cap = sgraph[ssource].attributes[0];
+  if (supply + demand < 0)
+    throw std::runtime_error(
+        "The Network has not enough supply to satisfy the demand.");
 
   // initial b-flow and residual graph
   graph_to_edgelist(sgraph, sedges);
   bflow = ford_fulkerson_max_flow(sgraph.size(), sedges, ssource, ssink,
                                   residual_graph, capacity_idx);
 
-  if (supply + demand < 0 || bflow < ssource_cap)
+  if (bflow < supply)
     throw std::runtime_error(
-        "The Network has not enough supply to satisfy the demand.");
+        "The Network is to small to transport the available supply.");
 
   // reverse cost of residual edges
   for (idx_t i = 0; i < sgraph.size(); ++i) {
@@ -162,14 +163,14 @@ double cycle_canceling_mcf(const graph_t &graph, unsigned cost_idx,
   // find final cost
   redge_c edges;
   graph_to_edgelist(residual_graph, edges);
+  double path_cost, capacity;
   double min_cost = 0, max_flow = 0;
   for (idx_t i = 0; i < edges.size(); ++i) {
     idx_t from = edges[i].source, to = edges[i].destination;
-    double path_cost = -edges[i].weights[cost_idx];
-    double capacity = edges[i].weights[capacity_idx];
+    path_cost = -edges[i].weights[cost_idx];
+    capacity = edges[i].weights[capacity_idx];
 
     if (!graph_has_edge(sgraph, from, to) && capacity > 0) {
-      max_flow += capacity;
       min_cost += path_cost * capacity;
     }
   }

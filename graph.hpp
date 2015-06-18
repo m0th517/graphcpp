@@ -53,6 +53,9 @@ idx_t edge_init(redge_c &edges, std::string filename, int num_weights,
 idx_t graph_init_flow(graph_t &graph, std::string filename, int num_weights,
                       graph_direction dir = DIRECTED);
 
+idx_t graph_init_bipartite(graph_t &graph, idx_t &num_group,
+                           std::string filename, int num_weights);
+
 // does not check for existance of edge
 double graph_get_edge_weight(const graph_t &graph, idx_t source,
                              idx_t destination, unsigned weight_idx = 0);
@@ -80,8 +83,7 @@ idx_t graph_get_edge_index(graph_t &graph, idx_t source, idx_t destination);
 
 idx_t graph_to_edgelist(const graph_t &graph, redge_c &edges);
 
-bool graph_has_edge(const graph_t &graph, idx_t source,
-                             idx_t destination);
+bool graph_has_edge(const graph_t &graph, idx_t source, idx_t destination);
 
 void print_edgelist(redge_c &edges);
 

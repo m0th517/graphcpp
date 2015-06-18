@@ -13,11 +13,10 @@ void graph_init_from_edges(graph_t &graph, idx_t num_elements, redge_c &edges,
   graph = graph_t(num_elements);
   for (idx_t i = 0; i < edges.size(); ++i) {
     edge = edges[i];
-    graph[edges[i].source].edges.push_back({ edge.destination, edge.weights });
+    graph[edges[i].source].edges.push_back({edge.destination, edge.weights});
 
     if (dir == UNDIRECTED)
-      graph[edges[i].destination].edges.push_back(
-          { edge.source, edge.weights });
+      graph[edges[i].destination].edges.push_back({edge.source, edge.weights});
   }
 }
 
@@ -36,7 +35,6 @@ idx_t graph_init(graph_t &graph, std::string filename, int num_weights,
   graph = graph_t(num_vertices);
 
   while (file) {
-      // TODO this has to stand in the while i think.
     std::getline(file, line);
 
     if (line.empty())
@@ -60,6 +58,45 @@ idx_t graph_init(graph_t &graph, std::string filename, int num_weights,
       e.destination = source;
       graph[undir_source].edges.push_back(e);
     }
+  }
+  return num_vertices;
+}
+
+idx_t graph_init_bipartite(graph_t &graph, idx_t &num_group,
+                           std::string filename, int num_weights) {
+  edge e;
+  idx_t source, undir_source, num_vertices;
+  std::string line;
+  std::vector<std::string> parts;
+
+  std::ifstream file(filename.c_str());
+
+  // first line is number of vertices
+  std::getline(file, line);
+  num_vertices = strtol(line.c_str(), NULL, 10);
+  graph = graph_t(num_vertices);
+
+  // second line is number of vertices belonging to group 1
+  std::getline(file, line);
+  num_group = strtol(line.c_str(), NULL, 10);
+
+  while (file) {
+    std::getline(file, line);
+
+    if (line.empty())
+      continue;
+
+    parts = str_split(line, '\t');
+    assert(2 + num_weights == parts.size());
+
+    source = strtol(parts[0].c_str(), NULL, 10);
+    e.destination = strtol(parts[1].c_str(), NULL, 10);
+    e.weights.resize(num_weights);
+
+    for (unsigned i = 2; i < (num_weights + 2); ++i)
+      e.weights[i - 2] = strtof(parts[i].c_str(), NULL);
+
+    graph[source].edges.push_back(e);
   }
   return num_vertices;
 }
@@ -123,7 +160,7 @@ idx_t graph_init_flow(graph_t &graph, std::string filename, int num_weights,
   graph = graph_t(num_vertices);
 
   // get the balance for each vertex
-  for(idx_t i = 0; i < num_vertices; ++i){
+  for (idx_t i = 0; i < num_vertices; ++i) {
     std::getline(file, line);
     balance = strtod(line.c_str(), NULL);
     graph[i].attributes.push_back(balance);
@@ -155,7 +192,6 @@ idx_t graph_init_flow(graph_t &graph, std::string filename, int num_weights,
     }
   }
   return num_vertices;
-
 }
 
 unsigned graph_traverse_depth_first(const graph_t &graph, idx_t start_vertex,
@@ -242,8 +278,7 @@ double graph_get_edge_weight(const graph_t &graph, idx_t source,
   throw std::runtime_error("Edge weight not found.");
 }
 
-edge* graph_get_edge(graph_t &graph, idx_t source,
-                             idx_t destination) {
+edge *graph_get_edge(graph_t &graph, idx_t source, idx_t destination) {
   edge_c neighbours = graph[source].edges;
   for (idx_t i = 0; i < neighbours.size(); ++i)
     if (neighbours[i].destination == destination)
@@ -251,8 +286,7 @@ edge* graph_get_edge(graph_t &graph, idx_t source,
   throw std::runtime_error("Edge not found.");
 }
 
-idx_t graph_get_edge_index(graph_t &graph, idx_t source,
-                             idx_t destination){
+idx_t graph_get_edge_index(graph_t &graph, idx_t source, idx_t destination) {
   edge_c neighbours = graph[source].edges;
   for (idx_t i = 0; i < neighbours.size(); ++i)
     if (neighbours[i].destination == destination)
@@ -260,8 +294,7 @@ idx_t graph_get_edge_index(graph_t &graph, idx_t source,
   throw std::runtime_error("Edge not found.");
 }
 
-bool graph_has_edge(const graph_t &graph, idx_t source,
-                             idx_t destination){
+bool graph_has_edge(const graph_t &graph, idx_t source, idx_t destination) {
   edge_c neighbours = graph[source].edges;
   for (idx_t i = 0; i < neighbours.size(); ++i)
     if (neighbours[i].destination == destination)
@@ -269,18 +302,18 @@ bool graph_has_edge(const graph_t &graph, idx_t source,
   return false;
 }
 
-idx_t graph_to_edgelist(const graph_t &graph, redge_c &edges){
-    edges.clear();
+idx_t graph_to_edgelist(const graph_t &graph, redge_c &edges) {
+  edges.clear();
 
-    for(idx_t i = 0; i < graph.size(); ++i){
-        idx_t num_edges = graph[i].edges.size();
-      for (idx_t e = 0; e < num_edges; ++e) {
-          edge curr = graph[i].edges[e];
-          edges.push_back({i,curr.destination,curr.weights});
-      }
+  for (idx_t i = 0; i < graph.size(); ++i) {
+    idx_t num_edges = graph[i].edges.size();
+    for (idx_t e = 0; e < num_edges; ++e) {
+      edge curr = graph[i].edges[e];
+      edges.push_back({i, curr.destination, curr.weights});
     }
+  }
 
-    return graph.size();
+  return graph.size();
 }
 
 void print_edgelist(redge_c &edges) {

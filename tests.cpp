@@ -13,6 +13,7 @@
 #include "ford_fulkerson.hpp"
 #include "cycle_canceling_mcf.hpp"
 #include "successive_sp_mcf.hpp"
+#include "max_matching.hpp"
 
 using std::cout;
 
@@ -29,24 +30,46 @@ void test_mbf();
 void test_ford_fulkerson();
 void test_cycle_cancel();
 void test_succ_shortest_path();
+void test_max_matching();
 
 int main(int argc, char **argv) {
-  // test_graph_and_components();
-  // test_union_struct();
-  // test_kruskal_mst();
-  // test_prim_mst();
-  // test_nearest_neighbour();
-  // test_double_tree_tsp();
-  // test_all_paths();
-  // test_branch_and_bound();
-  // test_mbf();
-  // test_dijkstra();
-  // test_ford_fulkerson();
+  test_graph_and_components();
+  test_union_struct();
+  test_kruskal_mst();
+  test_prim_mst();
+  test_nearest_neighbour();
+  test_double_tree_tsp();
+  test_all_paths();
+  test_branch_and_bound();
+  test_mbf();
+  test_dijkstra();
+  test_ford_fulkerson();
   test_cycle_cancel();
   test_succ_shortest_path();
+  test_max_matching();
 
   cout << "ALL DONE.\n";
   return 0;
+}
+
+void test_max_matching() {
+  cout << "=== MAX MATCHING ===\n";
+  graph_t graph;
+  idx_t num_vertices, num_group, max_matchings;
+
+  cout << "Matching_100_100.txt:\n";
+  num_vertices =
+      graph_init_bipartite(graph, num_group, "graphs/Matching_100_100.txt", 0);
+  max_matchings = max_matching(graph, num_group);
+  cout << "Matchings: " << max_matchings << "\n";
+  assert(max_matchings == 100);
+
+  cout << "Matching2_100_100.txt:\n";
+  num_vertices =
+      graph_init_bipartite(graph, num_group, "graphs/Matching2_100_100.txt", 0);
+  max_matchings = max_matching(graph, num_group);
+  cout << "Matchings: " << max_matchings << "\n";
+  assert(max_matchings == 99);
 }
 
 void test_cycle_cancel() {
