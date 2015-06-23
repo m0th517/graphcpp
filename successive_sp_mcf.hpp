@@ -3,6 +3,28 @@
 
 #include "ford_fulkerson.hpp"
 
+bool find_unbalanced_source_sink_pair(const graph_t &rgraph,
+                                      vector<double> pos_balances,
+                                      vector<double> neg_balances,
+                                      idx_t &local_source, idx_t &local_sink,
+                                      unsigned capacity_idx) {
+  bool negative_cycle;
+  vector<idx_t> parent;
+  for (idx_t s = 0; s < pos_balances.size(); ++s) {
+    local_source = pos_balances[s];
+    for (idx_t t = 0; t < neg_balances.size(); ++t) {
+      negative_cycle = false;
+      local_sink = neg_balances[t];
+
+      // using ford fulkersons breadth first search because it returns true
+      // for connected vertices. stop if not connected.
+      if (bfs(rgraph, local_source, local_sink, parent, capacity_idx))
+        return true;
+    }
+  }
+  return false;
+}
+
 double successive_shortest_paths_mcf(const graph_t &graph, unsigned cost_idx,
                                      unsigned capacity_idx,
                                      unsigned balance_idx) {
@@ -24,8 +46,8 @@ double successive_shortest_paths_mcf(const graph_t &graph, unsigned cost_idx,
   residual_graph.resize(graph.size());
   for (idx_t i = 0; i < edges.size(); ++i) {
     raw_edge e = edges[i];
-    residual_graph[e.source].edges.push_back({e.destination, e.weights});
-    residual_graph[e.destination].edges.push_back({e.source, e.weights});
+    residual_graph[e.source].edges.push_back({ e.destination, e.weights });
+    residual_graph[e.destination].edges.push_back({ e.source, e.weights });
     residual_graph[e.destination].edges.back().weights[cost_idx] =
         -e.weights[cost_idx];
     residual_graph[e.destination].edges.back().weights[capacity_idx] = 0;
@@ -88,30 +110,17 @@ double successive_shortest_paths_mcf(const graph_t &graph, unsigned cost_idx,
     if (pos_balances.empty() && neg_balances.empty())
       break;
 
-    for (idx_t s = 0; s < pos_balances.size(); ++s) {
-      local_source = pos_balances[s];
-      for (idx_t t = 0; t < neg_balances.size(); ++t) {
-        negative_cycle = false;
-        local_sink = neg_balances[t];
-
-        // using ford fulkersons breadth first search because it returns true
-        // for connected vertices. stop if not connected.
-        if (bfs(residual_graph, local_source, local_sink, parent, capacity_idx))
-          goto FOUND_ST_PATH;
+    if (!find_unbalanced_source_sink_pair(residual_graph, pos_balances,
+                                          neg_balances, local_source,
+                                          local_sink, capacity_idx)) {
+      for (idx_t i = 0; i < graph.size(); ++i) {
+        local_balance = residual_graph[i].attributes[balance_idx];
+        if (local_balance != 0)
+          throw std::runtime_error(
+              "The Network is too small or not connected.");
       }
+      break;
     }
-
-    // this section is reached when no path could be found.
-    // if not all balances are zero the network is to small or not connected.
-    for (idx_t i = 0; i < graph.size(); ++i) {
-      local_balance = residual_graph[i].attributes[balance_idx];
-      if (local_balance != 0)
-        throw std::runtime_error("The Network is too small or not connected.");
-    }
-    break;
-
-  // exit point for nested for loop above
-  FOUND_ST_PATH:
 
     // compute shortest (cheapest) path from s to t
     st_cost = mbf_sp(residual_graph.size(), residual_edges, st_path,
