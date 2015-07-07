@@ -5,11 +5,6 @@
 
 #define dijk_undefined ((idx_t) - 1)
 
-template <class T> void remove_element(vector<T> &vec, idx_t index) {
-  std::swap(vec[index], vec.back());
-  vec.pop_back();
-}
-
 double dijkstra_sp(graph_t &graph, vector<idx_t> &tour, idx_t source,
                    idx_t destination, unsigned weight_idx = 0) {
   edge e;

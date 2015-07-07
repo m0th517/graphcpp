@@ -2,7 +2,7 @@
 #define MAX_MATCHING_HPP
 
 double max_matching(const graph_t &graph, idx_t num_group) {
-  graph_t sgraph;
+  graph_t sgraph, residual_graph;
   redge_c sedges;
   idx_t ssource = graph.size();
   idx_t ssink = ssource + 1;
