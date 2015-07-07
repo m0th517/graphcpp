@@ -10,7 +10,7 @@ the traveling salesman problem or the minimum-cost flow problem.
   * Depth-first Search
 * Minimum Spanning Trees
   * Prim
-  * Krustkal
+  * Kruskal
 * Traveling-Salesman
   * Nearest-Neighbour
   * Double-Tree
