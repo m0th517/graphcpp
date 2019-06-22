@@ -1,2 +1,2 @@
 all:
-	clang++ -g -O3 -std=c++11 graph.cpp tests.cpp -o run_tests
+	clang++ -g -std=c++11 -O3 graph.cpp tests.cpp -o run_tests

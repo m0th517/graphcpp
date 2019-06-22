@@ -2,6 +2,8 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <numeric>
+#include <math.h>
 
 #ifndef GRAPH_HPP
 #define GRAPH_HPP
